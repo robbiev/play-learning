@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import models.Input;
-
 import oauth.signpost.http.HttpParameters;
 
 import org.codehaus.jackson.JsonNode;
@@ -15,18 +14,23 @@ import play.Logger.ALogger;
 import play.data.Form;
 import play.libs.F.Function;
 import play.libs.F.Option;
-import play.libs.Json;
 import play.libs.OAuth.OAuthCalculator;
 import play.libs.OAuth.RequestToken;
 import play.libs.WS;
 import play.libs.WS.Response;
 import play.mvc.Controller;
 import play.mvc.Result;
-
+/**
+ * TODO:
+ * - stream tweets from background
+ * - testing?
+ * - storage of input
+ */
 public class Application extends Controller {
   private static final String FLASH_CURRENT_INPUT = "input";
   private static final ALogger log = Logger.of("application");
   private static final Form<Input> inputForm = Form.form(Input.class);
+  private static final TweetsFromBackground t = new TweetsFromBackground();
   
 	public static Result index() {
 	  Option<RequestToken> token = Twitter.getToken();
@@ -54,7 +58,7 @@ public class Application extends Controller {
 	            }
 	          }));
 	    }
-	    return ok(views.html.index.render(Arrays.asList("default"), inputForm));
+	    return ok(views.html.index.render(new ArrayList<String>(), inputForm));
 	  }
 		return redirect(routes.Twitter.auth());
 	}
@@ -62,7 +66,7 @@ public class Application extends Controller {
 	public static Result load() {
 	  Form<Input> form = inputForm.bindFromRequest();
 	  if (form.hasErrors()) {
-	    flash("error", "Please correct the form below.");
+	    flash("error", "Please enter all required fields.");
 	    return badRequest(views.html.index.render(Arrays.<String>asList(), form));
 	  }
 	  flash("success", "Success!");
