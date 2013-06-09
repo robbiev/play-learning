@@ -1,6 +1,25 @@
-@(messages: List[String])
+@(messages: List[String], inputForm: Form[Input])
+@import helper._
+@import helper.twitterBootstrap._
 
 @main("Pirate") {
+	@if(flash.containsKey("success")){
+		 <div class="alert alert-success">
+		 @flash.get("success")
+		 </div>
+	}
+	@if(flash.containsKey("error")){
+		 <div class="alert alert-error">
+		 @flash.get("error")
+		 </div>
+	}
+	@helper.form(action = routes.Application.load()) {
+		<fieldset>
+		  <legend>Enter the user to track</legend>
+          @helper.inputText(inputForm("text"), '_label -> "Twitter User", '_showConstraints -> false)
+		</fieldset>
+		<input type="submit" class="btn primary" value="Track">
+	}
 	<ul>
     @for(message <- messages) {
     	<li>@message</li>
