@@ -1,5 +1,8 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codehaus.jackson.JsonNode;
 
 import play.Logger;
@@ -23,13 +26,12 @@ public class Application extends Controller {
 	        .get()
 	        .map(new Function<Response, Result>(){
 	          @Override
-	          public Result apply(Response arg0) throws Throwable {
-	            StringBuilder builder = new StringBuilder();
-	            for(JsonNode node : arg0.asJson()) {
-	              builder.append(node.get("text").asText());
-	              builder.append(System.lineSeparator());
+	          public Result apply(Response jsonResponse) throws Throwable {
+	            List<String> tweets = new ArrayList<>();
+	            for(JsonNode node : jsonResponse.asJson()) {
+	              tweets.add(node.get("text").asText());
 	            }
-	            return ok(builder.toString());
+	            return ok(views.html.index.render(tweets));
 	          }
 	        }));
 	  }
