@@ -3,6 +3,7 @@
 @import helper.twitterBootstrap._
 
 @main("Pirate") {
+	<a href="@routes.Application.about()">About</a>
 	@if(flash.containsKey("success")){
 		 <div class="alert alert-success">
 		 @flash.get("success")
@@ -20,9 +21,10 @@
 		</fieldset>
 		<input type="submit" class="btn primary" value="Track">
 	}
-	<ul>
+	<ul id="tweets">
     @for(message <- messages) {
     	<li>@message</li>
     }
     </ul>
 }
+@websockets()

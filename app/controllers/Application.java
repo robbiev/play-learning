@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +23,6 @@ import play.mvc.Controller;
 import play.mvc.Result;
 /**
  * TODO:
- * - stream tweets from background
  * - testing?
  * - storage of input
  */
@@ -30,7 +30,6 @@ public class Application extends Controller {
   private static final String FLASH_CURRENT_INPUT = "input";
   private static final ALogger log = Logger.of("application");
   private static final Form<Input> inputForm = Form.form(Input.class);
-  private static final TweetsFromBackground t = new TweetsFromBackground();
   
 	public static Result index() {
 	  Option<RequestToken> token = Twitter.getToken();
@@ -40,6 +39,7 @@ public class Application extends Controller {
 	      params.put("screen_name", flash(FLASH_CURRENT_INPUT));
 	      OAuthCalculator oAuthCalculator = new play.libs.OAuth.OAuthCalculator(Twitter.CONSUMER_KEY, token.get());
 	      oAuthCalculator.setAdditionalParameters(params);
+
 	      return async(WS.url("https://api.twitter.com/1.1/statuses/user_timeline.json")
 	          .sign(oAuthCalculator)
 	          .setQueryParameter("screen_name", flash(FLASH_CURRENT_INPUT))
@@ -72,5 +72,14 @@ public class Application extends Controller {
 	  flash("success", "Success!");
 	  flash(FLASH_CURRENT_INPUT, form.get().text);
 	  return redirect(routes.Application.index());
+	}
+	public static Result about() {
+	  return ok(views.html.about.render("mddsfd"));
+	}
+	public static Result test(String test) {
+	  return ok(views.html.about.render(test));
+	}
+	public static Result longTest(Long test) {
+	  return ok(views.html.about.render("Long: "+test));
 	}
 }
