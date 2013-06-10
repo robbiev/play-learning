@@ -1,11 +1,12 @@
 package controllers;
 
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.List;
 
 import models.Input;
+import models.Tweet;
+import models.User;
 import oauth.signpost.http.HttpParameters;
 
 import org.codehaus.jackson.JsonNode;
@@ -21,11 +22,7 @@ import play.libs.WS;
 import play.libs.WS.Response;
 import play.mvc.Controller;
 import play.mvc.Result;
-/**
- * TODO:
- * - testing?
- * - storage of input
- */
+
 public class Application extends Controller {
   private static final String FLASH_CURRENT_INPUT = "input";
   private static final ALogger log = Logger.of("application");
@@ -73,9 +70,21 @@ public class Application extends Controller {
 	  flash(FLASH_CURRENT_INPUT, form.get().text);
 	  return redirect(routes.Application.index());
 	}
+
 	public static Result about() {
-	  return ok(views.html.about.render("mddsfd"));
+	  User user = new User();
+	  user.name = "robbiev";
+	  user.save();
+
+	  Tweet tweet = new Tweet();
+	  tweet.text = "this is my tweet";
+	  tweet.user = user;
+	  tweet.save();
+	  
+	  List<User> users = User.find().where().eq("name", "robbiev").findList();
+	  return ok(views.html.about.render(""+users.size()));
 	}
+
 	public static Result test(String test) {
 	  return ok(views.html.about.render(test));
 	}
